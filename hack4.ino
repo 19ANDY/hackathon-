@@ -1,52 +1,40 @@
-int data;
-//const int pwm = 2 ;  //initializing pin 2 as pwm
-const int in_1 = 11 ;
-const int in_2 = 12 ;
+#include <SoftwareSerial.h>
 
-void setup() {
-  Serial.begin(9600); //initialize serial COM at 9600 baudrate
- // pinMode(, OUTPUT); //make the LED pin (13) as output
-//pinMode(pwm,OUTPUT) ;   //we have to set PWM pin as output
-pinMode(in_1,OUTPUT) ;  //Logic pins are also set as output
-pinMode(in_2,OUTPUT) ;
-digitalWrite (LED_BUILTIN, LOW);
-Serial.println("Hi!, I am Arduino");
-}
+SoftwareSerial mySerial(9, 10);
 
-void loop() {
-while (Serial.available()){
-  data = Serial.read();
-}
-do
+void setup()
 {
-if  (data == '1')
+  mySerial.begin(9600);   // Setting the baud rate of GSM Module  
+  Serial.begin(9600);    // Setting the baud rate of Serial Monitor (Arduino)
+  delay(100);
+}
+
+
+void loop()
 {
-digitalWrite(in_1,HIGH) ;
-digitalWrite(in_2,LOW) ;
-//analogWrite(pwm,255) ;
-digitalWrite (LED_BUILTIN, HIGH);
-delay(1000);
-digitalWrite(in_1,HIGH) ;
-digitalWrite(in_2,HIGH) ;
-//analogWrite(pwm,255) ;
-digitalWrite (LED_BUILTIN, LOW);
-delay(6000);
-digitalWrite(in_1,LOW) ;
-digitalWrite(in_2,HIGH) ;
-//analogWrite(pwm,255) ;
-//digitalWrite (LED_BUILTIN, HIGH);
-delay(1000); 
+  if (Serial.available()>0)
+   switch(Serial.read())
+  {
+    case 'z':
+      SendMessage();
+      break;
+    
+  }
+
+ if (mySerial.available()>0)
+   Serial.write(mySerial.read());
 }
 
-else if (data == '0')
+
+ void SendMessage()
 {
-digitalWrite(in_1,HIGH) ;
-digitalWrite(in_2,HIGH) ;
-//analogWrite(pwm,255) ;
-digitalWrite (LED_BUILTIN, LOW);
-delay(1000);
+  mySerial.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+  delay(1000);  // Delay of 1000 milli seconds or 1 second
+  mySerial.println("AT+CMGS=\"+918233371934\"\r"); // Replace x with mobile number
+  delay(1000);
+  mySerial.println("An Attempt has been made to access your door");// The SMS text you want to send
+  delay(100);
+   mySerial.println((char)26);// ASCII code of CTRL+Z
+  delay(1000);
 }
-}while(0);
 
-
-}
