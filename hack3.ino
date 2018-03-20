@@ -31,6 +31,7 @@ if(data == '1')
 {
 digitalWrite(in_1,HIGH) ;
 digitalWrite(in_2,LOW) ;
+
 digitalWrite (LED_BUILTIN, HIGH);
 delay(1000);
 digitalWrite(in_1,HIGH) ;
